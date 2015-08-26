@@ -11,8 +11,8 @@ angular.module('demoApp')
   .controller('MainCtrl', function ($scope) {
     var products = [
       {
-        "id":11,
-        "name":"jablko",
+        id:11,
+        name:"jablko",
         "category":"ovoce",
         "price":5
       },
@@ -86,18 +86,11 @@ angular.module('demoApp')
      */
     $scope.initGrid = function() {
       $("#grid").kendoGrid({
-        dataSource: {
-          requestEnd: function(e) {
-            $scope.highlightRowsInGrid();
-          },
-          data: products
+        dataSource: products,
+        dataBound: function() {
+          $scope.highlightRowsInGrid();
         },
-        editable:{
-          confirmation:false //remove delete confirm message
-        },
-        scrollable:true,
-        resizable: true,
-
+        sortable: true,
         toolbar: [
           { template: kendo.template($("#template").html())}
         ],
@@ -145,23 +138,20 @@ angular.module('demoApp')
         ]
       });
 
-
       $("#grid").find("#category").kendoDropDownList({
         autoBind: true,
         optionLabel: "Vsechny kategorie",
         dataSource: {
-          data : $scope.categories
+         data: $scope.categories
         },
         change: function () {
-          var value = this.value();
-          if (value) {
+          if (this.value()) {
             $("#grid").data("kendoGrid").dataSource.filter({field: "category", operator: "eq", value: this.value()});
           } else {
             $("#grid").data("kendoGrid").dataSource.filter({});
           }
 
           $scope.highlightRowsInGrid();
-
           return this.value();
         }
       });
